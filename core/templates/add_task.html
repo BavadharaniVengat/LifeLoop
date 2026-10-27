@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if task %}Edit Task{% else %}Add Task{% endif %} | LifeLoop</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 480px;
+            padding: 30px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 18px;
+        }
+
+        h1 { color: #58a6ff; margin-top: 0; }
+        p { color: #8b949e; line-height: 1.5; }
+
+        label {
+            display: block;
+            margin: 20px 0 8px;
+            font-weight: bold;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #30363d;
+            border-radius: 9px;
+            background: #0d1117;
+            color: white;
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button, .back {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            margin-top: 20px;
+            border: 0;
+            border-radius: 9px;
+            background: #238636;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .back { background: #30363d; }
+        .message { color: #ff7b72; }
+    </style>
+</head>
+
+<body>
+    <main class="card">
+        <h1>{% if task %}✏️ Edit Task{% else %}📝 Add New Task{% endif %}</h1>
+        <p>Small daily actions lead to big achievements.</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p class="message">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label for="title">Task Title</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                placeholder="Example: Practice Python"
+                value="{{ task.title|default:'' }}"
+                required
+            >
+
+            <label for="description">Description</label>
+            <textarea
+                id="description"
+                name="description"
+                placeholder="What do you need to do?"
+            >{{ task.description|default:'' }}</textarea>
+
+            <button type="submit">
+                {% if task %}Update Task{% else %}Save Task{% endif %}
+            </button>
+        </form>
+
+        <a class="back" href="{% url 'dashboard' %}">← Back to Dashboard</a>
+    </main>
+</body>
+</html>

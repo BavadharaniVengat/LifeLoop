@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeLoop | Add Habit</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #202b3c;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            width: 100%;
+            max-width: 480px;
+            padding: 32px;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px #172b4912;
+        }
+
+        h1 { margin-top: 0; font-size: 27px; }
+
+        .muted { color: #718096; line-height: 1.5; }
+
+        label {
+            display: block;
+            margin: 22px 0 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #dce3ec;
+            border-radius: 9px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: 2px solid #7ee0bd;
+            border-color: #237b65;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 17px;
+            border: none;
+            border-radius: 9px;
+            background: #237b65;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .secondary {
+            background: #e7edf5;
+            color: #263750;
+        }
+
+        .error {
+            color: #b42318;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>🌱 Add a Habit</h1>
+        <p class="muted">
+            Small habits make a big difference. Start with one today!
+        </p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p class="error">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <label for="title">Habit name</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                placeholder="e.g. Drink 2 litres of water"
+                maxlength="200"
+                required
+            >
+
+            <div class="actions">
+                <button class="btn" type="submit">Save Habit</button>
+                <a class="btn secondary" href="{% url 'dashboard' %}">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

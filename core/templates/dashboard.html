@@ -1,0 +1,477 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeLoop | Dashboard</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #202b3c;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 235px;
+            background: #182b49;
+            color: white;
+            padding: 28px 18px;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 38px;
+        }
+
+        .brand span { color: #7ee0bd; }
+
+        .nav-link {
+            display: block;
+            color: #dce5f2;
+            text-decoration: none;
+            padding: 13px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .nav-link.active,
+        .nav-link:hover {
+            background: #2d4568;
+            color: white;
+        }
+
+        .main {
+            flex: 1;
+            padding: 32px;
+            min-width: 0;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 29px;
+        }
+
+        h2 {
+            font-size: 19px;
+            margin: 0;
+        }
+
+        .muted { color: #718096; }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 16px;
+            border: 0;
+            border-radius: 9px;
+            background: #237b65;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn.secondary {
+            background: #e7edf5;
+            color: #263750;
+        }
+
+        .btn.danger {
+            background: #fff0f0;
+            color: #b42318;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            margin: 28px 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 21px;
+            box-shadow: 0 4px 18px #172b490b;
+            min-width: 0;
+        }
+
+        .stat-number {
+            font-size: 29px;
+            font-weight: bold;
+            margin: 13px 0 5px;
+        }
+
+        .sections {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .item {
+            border: 1px solid #edf0f5;
+            padding: 14px;
+            border-radius: 11px;
+            margin-top: 11px;
+            overflow-wrap: anywhere;
+        }
+
+        .item-title {
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .item p {
+            color: #718096;
+            font-size: 14px;
+            margin: 7px 0;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .actions form { margin: 0; }
+
+        .progress-track {
+            background: #e9eef4;
+            height: 8px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #32a786;
+            border-radius: 20px;
+            transition: width 0.3s ease;
+        }
+
+        .messages { list-style: none; padding: 0; }
+
+        .messages li {
+            background: #e7f8f0;
+            padding: 12px;
+            border-radius: 9px;
+            margin: 8px 0;
+        }
+
+        .empty {
+            text-align: center;
+            color: #718096;
+            padding: 25px 8px;
+        }
+
+        @media(max-width: 1100px) {
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media(max-width: 950px) {
+            .sections { grid-template-columns: 1fr; }
+        }
+
+        @media(max-width: 600px) {
+            .layout { display: block; }
+
+            .sidebar {
+                width: 100%;
+                padding: 18px;
+            }
+
+            .brand { margin-bottom: 16px; }
+
+            .main { padding: 20px 14px; }
+
+            .stats { gap: 10px; }
+
+            .card { padding: 15px; }
+
+            h1 { font-size: 24px; }
+
+            .stat-number { font-size: 24px; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">Life<span>Loop</span> 🌱</div>
+
+        <a class="nav-link active" href="{% url 'dashboard' %}">
+            ▦ Dashboard
+        </a>
+        <a class="nav-link" href="#tasks">✓ My Tasks</a>
+        <a class="nav-link" href="#goals">◎ My Goals</a>
+        <a class="nav-link" href="#habits">🌱 My Habits</a>
+        <a class="nav-link" href="#progress">↗ Progress</a>
+
+        <form method="post" action="{% url 'logout' %}" style="margin-top:30px;">
+            {% csrf_token %}
+            <button class="btn secondary" type="submit" style="width:100%;">
+                Log out ↗
+            </button>
+        </form>
+    </aside>
+
+    <main class="main">
+
+        <div class="topbar">
+            <div>
+                <h1>Welcome back, {{ request.user.username }}! 👋</h1>
+                <p class="muted">Small steps every day create big changes.</p>
+            </div>
+
+            <a class="btn" href="{% url 'add_task' %}">＋ Add a task</a>
+        </div>
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- Dashboard Statistics -->
+        <div class="stats" id="progress">
+
+            <div class="card">
+                <div class="muted">Total Tasks</div>
+                <div class="stat-number">{{ total_tasks|default:0 }}</div>
+                <div class="muted">Your task list</div>
+            </div>
+
+            <div class="card">
+                <div class="muted">Completed Tasks</div>
+                <div class="stat-number">{{ completed_tasks|default:0 }}</div>
+                <div class="muted">Tasks finished</div>
+                <div class="progress-track">
+                    <div class="progress-fill"
+                         style="width: {{ task_progress|default:0 }}%;">
+                    </div>
+                </div>
+                <p class="muted">{{ task_progress|default:0 }}% complete</p>
+            </div>
+
+            <div class="card">
+                <div class="muted">Total Goals</div>
+                <div class="stat-number">{{ total_goals|default:0 }}</div>
+                <div class="muted">Things to achieve</div>
+            </div>
+
+            <div class="card">
+                <div class="muted">Completed Goals</div>
+                <div class="stat-number">{{ completed_goals|default:0 }}</div>
+                <div class="muted">Goals achieved</div>
+                <div class="progress-track">
+                    <div class="progress-fill"
+                         style="width: {{ goal_progress|default:0 }}%;">
+                    </div>
+                </div>
+                <p class="muted">{{ goal_progress|default:0 }}% complete</p>
+            </div>
+
+            <div class="card">
+                <div class="muted">Total Habits</div>
+                <div class="stat-number">{{ total_habits|default:0 }}</div>
+                <div class="muted">Habits you're building</div>
+            </div>
+
+            <div class="card">
+                <div class="muted">Completed Habits Today</div>
+                <div class="stat-number">
+                    {{ completed_habits|default:0 }}
+                    <span style="font-size:16px;color:#718096;">
+                        / {{ total_habits|default:0 }}
+                    </span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill"
+                         style="width: {{ habit_progress|default:0 }}%;">
+                    </div>
+                </div>
+                <p class="muted">
+                    {{ habit_progress|default:0 }}% completed today
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Tasks, Goals and Habits -->
+        <div class="sections">
+
+            <!-- Tasks -->
+            <section class="card" id="tasks">
+                <div class="section-head">
+                    <h2>📝 My Tasks</h2>
+                    <a class="btn" href="{% url 'add_task' %}">＋ Add</a>
+                </div>
+
+                {% for task in tasks %}
+                    <div class="item">
+                        <div class="item-title">{{ task.title }}</div>
+                        <p>{{ task.description|default:"No description added." }}</p>
+                        <p>
+                            {% if task.completed %}
+                                ✅ Completed
+                            {% else %}
+                                ⏳ Pending
+                            {% endif %}
+                        </p>
+
+                        <div class="actions">
+                            <a class="btn secondary"
+                               href="{% url 'edit_task' task.id %}">Edit</a>
+
+                            <form method="post"
+                                  action="{% url 'toggle_task' task.id %}">
+                                {% csrf_token %}
+                                <button class="btn" type="submit">
+                                    {% if task.completed %}Mark pending{% else %}Complete{% endif %}
+                                </button>
+                            </form>
+
+                            <form method="post"
+                                  action="{% url 'delete_task' task.id %}"
+                                  onsubmit="return confirm('Delete this task?');">
+                                {% csrf_token %}
+                                <button class="btn danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty">No tasks yet. Add your first task! 🌱</div>
+                {% endfor %}
+            </section>
+
+            <!-- Goals -->
+            <section class="card" id="goals">
+                <div class="section-head">
+                    <h2>🎯 My Goals</h2>
+                    <a class="btn" href="{% url 'add_goal' %}">＋ Add</a>
+                </div>
+
+                {% for goal in goals %}
+                    <div class="item">
+                        <div class="item-title">{{ goal.title }}</div>
+                        <p>{{ goal.description|default:"No description added." }}</p>
+                        <p>
+                            {% if goal.completed %}
+                                ✅ Achieved
+                            {% else %}
+                                🎯 In progress
+                            {% endif %}
+                        </p>
+
+                        <div class="actions">
+                            <a class="btn secondary"
+                               href="{% url 'edit_goal' goal.id %}">Edit</a>
+
+                            <form method="post"
+                                  action="{% url 'toggle_goal' goal.id %}">
+                                {% csrf_token %}
+                                <button class="btn" type="submit">
+                                    {% if goal.completed %}Mark pending{% else %}Complete{% endif %}
+                                </button>
+                            </form>
+
+                            <form method="post"
+                                  action="{% url 'delete_goal' goal.id %}"
+                                  onsubmit="return confirm('Delete this goal?');">
+                                {% csrf_token %}
+                                <button class="btn danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty">No goals yet. Add a goal to get started! ✨</div>
+                {% endfor %}
+            </section>
+
+            <!-- Habits -->
+            <section class="card" id="habits">
+                <div class="section-head">
+                    <h2>🌱 My Habits</h2>
+                    <a class="btn" href="{% url 'add_habit' %}">＋ Add</a>
+                </div>
+
+                {% for habit in habits %}
+                    <div class="item">
+                        <div class="item-title">{{ habit.title }}</div>
+
+                        <p>
+                            {% if habit.completed_today %}
+                                ✅ Completed today
+                            {% else %}
+                                ⏳ Not completed today
+                            {% endif %}
+                        </p>
+
+                        <div class="actions">
+                            <form method="post"
+                                  action="{% url 'toggle_habit' habit.id %}">
+                                {% csrf_token %}
+                                <button class="btn" type="submit">
+                                    {% if habit.completed_today %}
+                                        Mark incomplete
+                                    {% else %}
+                                        Mark complete
+                                    {% endif %}
+                                </button>
+                            </form>
+
+                            <form method="post"
+                                  action="{% url 'delete_habit' habit.id %}"
+                                  onsubmit="return confirm('Delete this habit?');">
+                                {% csrf_token %}
+                                <button class="btn danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty">
+                        No habits yet. Start a healthy habit today! 🌿
+                    </div>
+                {% endfor %}
+            </section>
+
+        </div>
+    </main>
+</div>
+</body>
+</html>
